@@ -1,16 +1,19 @@
 package ru.effective_mobile.tasks.service;
 
-import javax.xml.stream.events.Comment;
+import ru.effective_mobile.tasks.dto.CommentDto;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface CommentService {
 
-    Optional<List<Comment>> getAllByTaskId(Long id);
+    Optional<List<CommentDto>> getAllByTaskId(Long id);
 
-    Optional<Comment> addToTask(Long id, Comment comment);
+    Optional<CommentDto> getById(Long id);
 
-    Optional<Comment> edit(Comment comment);
+    Optional<CommentDto> addToTask(Long id, CommentDto commentDto);
+
+    Optional<CommentDto> edit(CommentDto commentDto);
 
     void delete(Long id);
 

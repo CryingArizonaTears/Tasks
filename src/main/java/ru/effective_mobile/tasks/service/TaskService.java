@@ -1,22 +1,22 @@
 package ru.effective_mobile.tasks.service;
 
-import org.springframework.scheduling.config.Task;
+import ru.effective_mobile.tasks.dto.TaskDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface TaskService {
 
-    Optional<Task> getById (Long id);
+    Optional<TaskDto> getById(Long id);
 
-    Optional<List<Task>> getAllByUserId (Long id);
+    Optional<List<TaskDto>> getAllByUserId(Long id);
 
-    Optional<Task> create (Task task);
+    Optional<TaskDto> create(TaskDto taskDto);
 
-    Optional<Task> edit (Task task);
+    Optional<TaskDto> edit(TaskDto taskDto);
 
-    Optional<Task> editStatus (Task task);
+    Optional<TaskDto> editStatus(TaskDto taskDto);
 
-    void delete (Task task);
+    void delete(Long id);
 
 }
