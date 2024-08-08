@@ -9,7 +9,7 @@ public interface TaskService {
 
     Optional<TaskDto> getById(Long id);
 
-    Optional<List<TaskDto>> getAllByUserId(Long id);
+    Optional<List<TaskDto>> getAllByAuthorId(Long id);
 
     Optional<TaskDto> create(TaskDto taskDto);
 

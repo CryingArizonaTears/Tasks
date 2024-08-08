@@ -11,7 +11,7 @@ public interface CommentService {
 
     Optional<CommentDto> getById(Long id);
 
-    Optional<CommentDto> addToTask(Long id, CommentDto commentDto);
+    Optional<CommentDto> addToTask(CommentDto commentDto);
 
     Optional<CommentDto> edit(CommentDto commentDto);
 

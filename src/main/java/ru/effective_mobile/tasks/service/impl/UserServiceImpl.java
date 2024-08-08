@@ -3,7 +3,6 @@ package ru.effective_mobile.tasks.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +23,6 @@ public class UserServiceImpl implements UserService {
     ModelMapper modelMapper;
     PasswordEncoder passwordEncoder;
 
-    @SneakyThrows
     @Override
     public Optional<UserDto> getById(Long id) {
         return Optional.ofNullable(modelMapper.map(userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found")), UserDto.class));
@@ -54,7 +52,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long id) {
-        Optional<UserDto> userDto = getById(id);
-        userRepository.delete(modelMapper.map(userDto, User.class));
+        userRepository.deleteById(id);
     }
 }
