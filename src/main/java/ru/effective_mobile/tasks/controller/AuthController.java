@@ -25,10 +25,9 @@ public class AuthController {
     UserAuthenticationService userAuthenticationService;
     TokenProvider tokenProvider;
 
-    @PermitAll
     @PostMapping("/registration")
     public ResponseEntity<UserDto> create(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.create(userDto).get());
+        return ResponseEntity.ok(userService.create(userDto));
     }
 
     @PostMapping("/auth")

@@ -9,7 +9,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.effective_mobile.tasks.security.CustomUserDetailsService;
+import ru.effective_mobile.tasks.security.filter.JwtFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -21,12 +26,22 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @ComponentScan
 public class SecurityConfig {
 
+    JwtFilter jwtFilter;
+    CustomUserDetailsService jpaUserDetailsService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.
-                csrf().disable().cors().disable()
-                .authorizeRequests()
-                .anyRequest().permitAll();
-        return http.build();
+        return http
+                .cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth", "/registration")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .userDetailsService(jpaUserDetailsService)
+                .build();
     }
 }

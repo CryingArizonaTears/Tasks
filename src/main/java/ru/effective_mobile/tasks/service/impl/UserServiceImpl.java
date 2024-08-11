@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.effective_mobile.tasks.dto.UserDto;
+import ru.effective_mobile.tasks.model.Role;
 import ru.effective_mobile.tasks.model.User;
 import ru.effective_mobile.tasks.repository.UserRepository;
 import ru.effective_mobile.tasks.service.UserService;
@@ -24,30 +25,31 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
 
     @Override
-    public Optional<UserDto> getById(Long id) {
-        return Optional.ofNullable(modelMapper.map(userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found")), UserDto.class));
+    public UserDto getById(Long id) {
+        return modelMapper.map(userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found")), UserDto.class);
     }
 
     @Override
-    public Optional<UserDto> create(UserDto userDto) {
+    public UserDto create(UserDto userDto) {
         userDto.setId(null);
+        userDto.setRole(Role.ROLE_USER);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        return Optional.ofNullable(modelMapper.map(userRepository.save(modelMapper.map(userDto, User.class)), UserDto.class));
+        return modelMapper.map(userRepository.save(modelMapper.map(userDto, User.class)), UserDto.class);
     }
 
     @Override
-    public Optional<UserDto> edit(UserDto userDto) {
-        Optional<UserDto> userForEdit = getById(userDto.getId());
+    public UserDto edit(UserDto userDto) {
+        UserDto userForEdit = getById(userDto.getId());
         if (userDto.getEmail() != null) {
-            userForEdit.get().setEmail(userDto.getEmail());
+            userForEdit.setEmail(userDto.getEmail());
         }
         if (userDto.getPassword() != null) {
-            userForEdit.get().setPassword(passwordEncoder.encode(userDto.getPassword()));
+            userForEdit.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
         if (userDto.getName() != null) {
-            userForEdit.get().setName(userDto.getName());
+            userForEdit.setName(userDto.getName());
         }
-        return Optional.ofNullable(modelMapper.map(userRepository.save(modelMapper.map(userDto, User.class)), UserDto.class));
+        return modelMapper.map(userRepository.save(modelMapper.map(userDto, User.class)), UserDto.class);
     }
 
     @Override

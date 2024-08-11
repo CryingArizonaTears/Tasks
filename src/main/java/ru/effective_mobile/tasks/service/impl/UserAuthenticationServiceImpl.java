@@ -3,6 +3,7 @@ package ru.effective_mobile.tasks.service.impl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,22 +24,23 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
+    ModelMapper modelMapper;
 
     @Override
-    public User getCurrent() {
+    public UserDto getCurrent() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        return getByEmail(currentPrincipalName).get();
+        return modelMapper.map(getByEmail(currentPrincipalName), UserDto.class);
     }
 
     @Override
-    public Optional<User> getByEmail(String email) {
-        return Optional.ofNullable(userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found")));
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found"));
     }
 
     @Override
     public User getEncryptedUserCredentials(UserDto userDto) {
-        User userFromRepoByEmail = getByEmail(userDto.getEmail()).get();
+        User userFromRepoByEmail = getByEmail(userDto.getEmail());
         if (!ObjectUtils.isEmpty(userFromRepoByEmail)) {
             if (passwordEncoder.matches(userDto.getPassword(), userFromRepoByEmail.getPassword())) {
                 return userFromRepoByEmail;

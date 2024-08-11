@@ -23,8 +23,8 @@ public class Task extends AbstractModel{
     TaskPriority priority;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id", nullable = false)
-    User authorId;
+    User author;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "performer_id", nullable = false)
-    User performerId;
+    User performer;
 }

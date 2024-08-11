@@ -11,6 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends CrudRepository<Task, Long> {
-    @Query(value = "Select * Form task Where author_id = ?1", nativeQuery = true)
+    @Query(value = "Select * From task Where author_id = ?1", nativeQuery = true)
     Optional<List<Task>> findAllByAuthorId(Long userId);
 }

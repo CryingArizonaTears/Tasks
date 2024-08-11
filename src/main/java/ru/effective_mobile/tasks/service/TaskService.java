@@ -3,19 +3,18 @@ package ru.effective_mobile.tasks.service;
 import ru.effective_mobile.tasks.dto.TaskDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TaskService {
 
-    Optional<TaskDto> getById(Long id);
+    TaskDto getById(Long id);
 
-    Optional<List<TaskDto>> getAllByAuthorId(Long id);
+    List<TaskDto> getAllByAuthorId(Long id);
 
-    Optional<TaskDto> create(TaskDto taskDto);
+    TaskDto create(TaskDto taskDto);
 
-    Optional<TaskDto> edit(TaskDto taskDto);
+    TaskDto edit(TaskDto taskDto);
 
-    Optional<TaskDto> editStatus(TaskDto taskDto);
+    TaskDto editStatus(TaskDto taskDto);
 
     void delete(Long id);
 

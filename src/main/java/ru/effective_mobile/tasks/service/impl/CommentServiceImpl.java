@@ -11,9 +11,9 @@ import ru.effective_mobile.tasks.dto.CommentDto;
 import ru.effective_mobile.tasks.model.Comment;
 import ru.effective_mobile.tasks.repository.CommentRepository;
 import ru.effective_mobile.tasks.service.CommentService;
+import ru.effective_mobile.tasks.service.UserAuthenticationService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,32 +23,45 @@ public class CommentServiceImpl implements CommentService {
     CommentRepository commentRepository;
     ModelMapper modelMapper;
     ExtendedModelMapper extendedModelMapper;
+    UserAuthenticationService userAuthenticationService;
+
 
     @Override
-    public Optional<CommentDto> getById(Long id) {
-        return Optional.ofNullable(modelMapper.map(commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Comment not found")), CommentDto.class));
+    public CommentDto getById(Long id) {
+        return modelMapper.map(commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Comment not found")), CommentDto.class);
     }
 
     @Override
-    public Optional<List<CommentDto>> getAllByTaskId(Long id) {
-        Optional<List<Comment>> commentsFromRepo = Optional.ofNullable(commentRepository.findAllByTaskId(id).orElseThrow(() -> new EntityNotFoundException("Comments not found")));
-        return Optional.ofNullable(extendedModelMapper.mapList(commentsFromRepo.get(), CommentDto.class));
+    public List<CommentDto> getAllByTaskId(Long id) {
+        List<Comment> commentsFromRepo = commentRepository.findAllByTaskId(id).orElseThrow(() -> new EntityNotFoundException("Comments not found"));
+        return extendedModelMapper.mapList(commentsFromRepo, CommentDto.class);
     }
 
     @Override
-    public Optional<CommentDto> addToTask(CommentDto commentDto) {
-        return Optional.ofNullable(modelMapper.map(commentRepository.save(modelMapper.map(commentDto, Comment.class)), CommentDto.class));
+    public CommentDto addToTask(CommentDto commentDto) {
+        commentDto.setId(null);
+        commentDto.setUser(userAuthenticationService.getCurrent());
+        return modelMapper.map(commentRepository.save(modelMapper.map(commentDto, Comment.class)), CommentDto.class);
     }
 
     @Override
-    public Optional<CommentDto> edit(CommentDto commentDto) {
-        Optional<CommentDto> commentForEdit = getById(commentDto.getId());
-        commentForEdit.get().setText(commentDto.getText());
-        return Optional.ofNullable(modelMapper.map(commentRepository.save(modelMapper.map(commentDto, Comment.class)), CommentDto.class));
+    public CommentDto edit(CommentDto commentDto) {
+        CommentDto commentFromRepo = getById(commentDto.getId());
+        if (!commentFromRepo.getUser().getId().equals(userAuthenticationService.getCurrent().getId())) {
+            throw new SecurityException("You have no access to comment with " + commentDto.getId() + " id");
+        } else {
+            commentFromRepo.setText(commentDto.getText());
+            return modelMapper.map(commentRepository.save(modelMapper.map(commentDto, Comment.class)), CommentDto.class);
+        }
     }
 
     @Override
     public void delete(Long id) {
-        commentRepository.deleteById(id);
+        CommentDto commentFromRepo = getById(id);
+        if (!commentFromRepo.getUser().getId().equals(userAuthenticationService.getCurrent().getId())) {
+            throw new SecurityException("You have no access to comment with " + id + " id");
+        } else {
+            commentRepository.deleteById(id);
+        }
     }
 }

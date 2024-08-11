@@ -14,6 +14,6 @@ public class TaskDto {
     String description;
     TaskStatus status;
     TaskPriority priority;
-    UserDto authorId;
-    UserDto performerId;
+    UserDto author;
+    UserDto performer;
 }
