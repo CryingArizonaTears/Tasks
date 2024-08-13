@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class ApiException {
     String name;
     String message;
-    Throwable throwable;
     HttpStatus httpStatus;
     LocalDateTime localDateTime;
 }

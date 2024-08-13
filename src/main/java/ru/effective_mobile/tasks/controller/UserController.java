@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.effective_mobile.tasks.dto.UserDto;
 import ru.effective_mobile.tasks.service.UserService;
@@ -19,7 +20,7 @@ public class UserController {
 
     @PreAuthorize(value = "hasRole('ROLE_USER')")
     @PutMapping()
-    public ResponseEntity<UserDto> edit(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> edit(@Validated(UserDto.EditValidationGroup.class) @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.edit(userDto));
     }
 

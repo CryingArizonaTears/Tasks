@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.effective_mobile.tasks.dto.CommentDto;
 import ru.effective_mobile.tasks.service.CommentService;
@@ -22,7 +23,7 @@ public class CommentController {
 
     @PreAuthorize(value = "hasRole('ROLE_USER')")
     @PostMapping()
-    public ResponseEntity<CommentDto> create(@RequestBody CommentDto commentDto) {
+    public ResponseEntity<CommentDto> create(@Validated(CommentDto.CreateValidationGroup.class) @RequestBody CommentDto commentDto) {
         return new ResponseEntity<>(commentService.addToTask(commentDto), HttpStatus.CREATED);
     }
 
@@ -40,7 +41,7 @@ public class CommentController {
 
     @PreAuthorize(value = "hasRole('ROLE_USER')")
     @PutMapping()
-    public ResponseEntity<CommentDto> edit(@RequestBody CommentDto commentDto) {
+    public ResponseEntity<CommentDto> edit(@Validated(CommentDto.EditValidationGroup.class) @RequestBody CommentDto commentDto) {
         return ResponseEntity.ok(commentService.edit(commentDto));
     }
 
