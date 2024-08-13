@@ -11,9 +11,8 @@ import ru.effective_mobile.tasks.dto.UserDto;
 import ru.effective_mobile.tasks.model.Role;
 import ru.effective_mobile.tasks.model.User;
 import ru.effective_mobile.tasks.repository.UserRepository;
+import ru.effective_mobile.tasks.service.UserAuthenticationService;
 import ru.effective_mobile.tasks.service.UserService;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +22,7 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     ModelMapper modelMapper;
     PasswordEncoder passwordEncoder;
+    UserAuthenticationService userAuthenticationService;
 
     @Override
     public UserDto getById(Long id) {
@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto edit(UserDto userDto) {
+        userDto.setId(userAuthenticationService.getCurrent().getId());
         UserDto userForEdit = getById(userDto.getId());
         if (userDto.getEmail() != null) {
             userForEdit.setEmail(userDto.getEmail());
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
+    public void delete() {
+        userRepository.deleteById(userAuthenticationService.getCurrent().getId());
     }
 }

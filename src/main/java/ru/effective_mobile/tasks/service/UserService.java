@@ -10,6 +10,6 @@ public interface UserService {
 
     UserDto edit(UserDto userDto);
 
-    void delete(Long id);
+    void delete();
 
 }

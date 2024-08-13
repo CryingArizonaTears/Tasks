@@ -13,7 +13,7 @@ public class Comment extends AbstractModel{
     Long id;
     @Column(name = "text", nullable = false)
     String text;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)
     Task task;
     @ManyToOne(fetch = FetchType.EAGER)

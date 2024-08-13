@@ -5,10 +5,12 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Entity
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Task extends AbstractModel{
+public class Task extends AbstractModel {
     @Column(name = "id", nullable = false)
     Long id;
     @Column(name = "title", nullable = false)
@@ -27,4 +29,6 @@ public class Task extends AbstractModel{
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "performer_id", nullable = false)
     User performer;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
+    List<Comment> comments;
 }
