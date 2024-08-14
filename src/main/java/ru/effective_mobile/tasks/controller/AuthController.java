@@ -36,29 +36,27 @@ public class AuthController {
     @PostMapping("/registration")
     @Operation(
             summary = "Create new user",
-            description = """
-					Creating new user with email, password and name.
-					""",
+            description = "Creating new user with email, password and name",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "User has been created and stays disable", content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class))),
-                    @ApiResponse(responseCode = "400", description = "User with provided email already exists or request body has invalid fields", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadValidationResponse.class))),
-                    @ApiResponse(responseCode = "422", description = "Request body has invalid fields", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadValidationResponse.class))),
+                    @ApiResponse(responseCode = "200", description = "User has been created", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "400", description = "User with provided email already exists or request body has invalid fields", content = @Content(mediaType = "application/json")),
             },
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject("{\n\"password\": \"helloworlD!\",\n\"matchingPassword\": \"helloworlD!\",\n\"email\": \"initial@gmail.com\",\n\"firstName\": \"John\",\n\"lastName\": \"Smith\"\n}")))
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject("{\n\"email\": \"testemail1@mail.com\",\n\"password\": \"testpassword1\",\n\"name\": \"testname1\"}")))
     )
     public ResponseEntity<UserDto> create(@Validated(UserDto.RegistrationValidationGroup.class) @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.create(userDto));
     }
 
+
+    @PostMapping("/auth")
     @Operation(
             summary = "Login via email and password", description = "Authorise user by email and password and get token",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Token", content = {@Content(mediaType = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0NUBxd2UucXFxcSIsImV4cCI6MTcyMzY2OTIwMH0.xxk9mIUHzrNU6cCZsbOZraqPKL7MduOxeh2hsMJlORR8ZFvwFyGcHNlHgKIxSCXKtbv_izfNLqTh5xa5Gc9hZA")}),
-                    @ApiResponse(responseCode = "400", description = "Full authentication is required to access this resource")
+                    @ApiResponse(responseCode = "200", description = "Token"),
+                    @ApiResponse(responseCode = "400", description = "Request body has invalid fields")
             },
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject("{\n\"email\": \"initial@gmail.com\",\n\"password\": \"helloworlD!\"\n}")))
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject("{\n\"email\": \"testemail1@mail.com\",\n\"password\": \"testpassword1\"\n}")))
     )
-    @PostMapping("/auth")
     public ResponseEntity<String> logIn(@Validated @RequestBody UserDto UserDto) {
         User userLogin = userAuthenticationService.getEncryptedUserCredentials(UserDto);
         String token = tokenProvider.createToken(userLogin.getEmail());

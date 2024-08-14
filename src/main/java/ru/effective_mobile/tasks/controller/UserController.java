@@ -1,5 +1,9 @@
 package ru.effective_mobile.tasks.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +24,14 @@ public class UserController {
 
     @PreAuthorize(value = "hasRole('ROLE_USER')")
     @PutMapping()
+    @Operation(
+            summary = "Edit users email, password or name",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Token"),
+                    @ApiResponse(responseCode = "400", description = "Request body has invalid fields")
+            },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject("{\n\"email\": \"testemail1@mail.com\",\n\"password\": \"testpassword1\"\n}")))
+    )
     public ResponseEntity<UserDto> edit(@Validated(UserDto.EditValidationGroup.class) @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.edit(userDto));
     }
