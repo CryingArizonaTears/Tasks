@@ -7,13 +7,10 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.effective_mobile.tasks.model.Role;
 import ru.effective_mobile.tasks.model.User;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)

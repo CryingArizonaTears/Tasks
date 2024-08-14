@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
             throw new SecurityException("You have no access to comment with " + commentDto.getId() + " id");
         } else {
             commentFromRepo.setText(commentDto.getText());
-            return modelMapper.map(commentRepository.save(modelMapper.map(commentDto, Comment.class)), CommentDto.class);
+            return modelMapper.map(commentRepository.save(modelMapper.map(commentFromRepo, Comment.class)), CommentDto.class);
         }
     }
 

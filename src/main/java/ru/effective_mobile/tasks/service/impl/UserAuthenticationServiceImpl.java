@@ -15,8 +15,6 @@ import ru.effective_mobile.tasks.model.User;
 import ru.effective_mobile.tasks.repository.UserRepository;
 import ru.effective_mobile.tasks.service.UserAuthenticationService;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

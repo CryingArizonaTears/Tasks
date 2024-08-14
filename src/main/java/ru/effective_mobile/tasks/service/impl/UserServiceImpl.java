@@ -40,17 +40,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto edit(UserDto userDto) {
         userDto.setId(userAuthenticationService.getCurrent().getId());
-        UserDto userForEdit = getById(userDto.getId());
+        UserDto userFromRepo = getById(userDto.getId());
         if (userDto.getEmail() != null) {
-            userForEdit.setEmail(userDto.getEmail());
+            userFromRepo.setEmail(userDto.getEmail());
         }
         if (userDto.getPassword() != null) {
-            userForEdit.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            userFromRepo.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
         if (userDto.getName() != null) {
-            userForEdit.setName(userDto.getName());
+            userFromRepo.setName(userDto.getName());
         }
-        return modelMapper.map(userRepository.save(modelMapper.map(userDto, User.class)), UserDto.class);
+        return modelMapper.map(userRepository.save(modelMapper.map(userFromRepo, User.class)), UserDto.class);
     }
 
     @Override

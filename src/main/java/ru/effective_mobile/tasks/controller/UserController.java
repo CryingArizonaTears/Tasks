@@ -27,10 +27,11 @@ public class UserController {
     @Operation(
             summary = "Edit users email, password or name",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Token"),
-                    @ApiResponse(responseCode = "400", description = "Request body has invalid fields")
+                    @ApiResponse(responseCode = "200", description = "User has been edited"),
+                    @ApiResponse(responseCode = "400", description = "Request body has invalid fields"),
+                    @ApiResponse(responseCode = "403", description = "User is anonymous")
             },
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject("{\n\"email\": \"testemail1@mail.com\",\n\"password\": \"testpassword1\"\n}")))
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject("{\n\"email\": \"testEmail1Edit@mail.com\",\n\"password\": \"testPassword1Edit\"\n, \n\"name\": \"testName1Edit\"\n}")))
     )
     public ResponseEntity<UserDto> edit(@Validated(UserDto.EditValidationGroup.class) @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.edit(userDto));
@@ -38,6 +39,12 @@ public class UserController {
 
     @PreAuthorize(value = "hasRole('ROLE_USER')")
     @DeleteMapping()
+    @Operation(
+            summary = "Delete account",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Account has been deleted"),
+                    @ApiResponse(responseCode = "403", description = "User is anonymous")
+            })
     public ResponseEntity<Void> delete() {
         userService.delete();
         return ResponseEntity.noContent().build();

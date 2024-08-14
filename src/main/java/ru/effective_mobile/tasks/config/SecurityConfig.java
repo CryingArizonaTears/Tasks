@@ -16,8 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import ru.effective_mobile.tasks.security.CustomUserDetailsService;
 import ru.effective_mobile.tasks.security.filter.JwtFilter;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
