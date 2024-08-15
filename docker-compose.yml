@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: 'mysql:latest'
+    container_name: 'java-mysql'
+    environment:
+      - MYSQL_DATABASE=tasks
+      - MYSQL_ROOT_PASSWORD=1234
+    volumes:
+      - ./scriptsForDB:/docker-entrypoint-initdb.d
+    networks:
+      - testnetwork1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  app:
+    build: ./
+    container_name: 'java-app'
+    ports:
+      - 8080:8080
+    environment:
+      - spring.datasource.url=jdbc:mysql://mysql:3306/tasks
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - testnetwork1
+
+networks:
+  testnetwork1:
