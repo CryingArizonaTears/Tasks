@@ -1,6 +1,5 @@
 package ru.effective_mobile.tasks.repository;
 
-import org.hibernate.annotations.processing.SQL;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

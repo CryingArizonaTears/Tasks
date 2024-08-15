@@ -1,80 +1,117 @@
 package ru.effective_mobile.tasks.service.impl;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.effective_mobile.tasks.dto.UserDto;
 import ru.effective_mobile.tasks.model.Role;
 import ru.effective_mobile.tasks.model.User;
 import ru.effective_mobile.tasks.repository.UserRepository;
-import ru.effective_mobile.tasks.service.UserService;
+import ru.effective_mobile.tasks.service.UserAuthenticationService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class UserServiceImplTest {
 
     @Mock
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
 
     @Mock
-    private ModelMapper modelMapper;
+    ModelMapper modelMapper;
+
+    @Mock
+    UserAuthenticationService userAuthenticationService;
 
     @InjectMocks
-    private UserService userService;
+    UserServiceImpl userServiceImpl;
 
-    private UserDto userDto;
-    private User user;
+    UserDto userDto;
+    User user;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         userDto = new UserDto();
+        userDto.setId(1L);
         userDto.setEmail("test@example.com");
         userDto.setPassword("password");
-        userDto.setName("Test name");
+        userDto.setName("testUser");
 
         user = new User();
         user.setId(1L);
         user.setEmail("test@example.com");
         user.setPassword("encodedPassword");
         user.setRole(Role.ROLE_USER);
-        user.setName("Test name");
+        user.setName("testUser");
+    }
 
-        when(passwordEncoder.encode(userDto.getPassword())).thenReturn("encodedPassword");
+    @Test
+    void testGetById_Successful() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(modelMapper.map(user, UserDto.class)).thenReturn(userDto);
+
+        UserDto foundUser = userServiceImpl.getById(1L);
+
+        assertEquals(1L, foundUser.getId());
+        assertEquals("test@example.com", foundUser.getEmail());
+    }
+
+    @Test
+    void testCreateUser_Successful() {
+        when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
         when(modelMapper.map(any(UserDto.class), any())).thenReturn(user);
         when(modelMapper.map(any(User.class), any())).thenReturn(userDto);
         when(userRepository.save(any(User.class))).thenReturn(user);
-    }
 
-    @Test
-    void getById() {
-    }
+        UserDto createdUser = userServiceImpl.create(userDto);
 
-    @Test
-    void create() {
-        UserDto createdUser = userService.create(userDto);
-
-        assertEquals("encodedPassword", createdUser.getPassword());
+        assertNull(createdUser.getId());
         assertEquals(Role.ROLE_USER, createdUser.getRole());
-        assertEquals("test@example.com", createdUser.getEmail());
-        assertEquals("Test name", createdUser.getName());
+        assertEquals("encodedPassword", createdUser.getPassword());
     }
 
     @Test
-    void edit() {
+    void testEditUser_Successful() {
+        when(userAuthenticationService.getCurrent()).thenReturn(userDto);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(passwordEncoder.encode("editedPassword")).thenReturn("encodedEditedPassword");
+        when(modelMapper.map(any(UserDto.class), any())).thenReturn(user);
+        when(modelMapper.map(any(User.class), any())).thenReturn(userDto);
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        userDto.setEmail("editedEmail@example.com");
+        userDto.setPassword("editedPassword");
+        userDto.setName("editedName");
+
+        UserDto updatedUser = userServiceImpl.edit(userDto);
+
+        assertEquals("editedEmail@example.com", updatedUser.getEmail());
+        assertEquals("encodedEditedPassword", updatedUser.getPassword());
+        assertEquals("editedName", updatedUser.getName());
     }
 
     @Test
-    void delete() {
+    void testDeleteUser_Successful() {
+        when(userAuthenticationService.getCurrent()).thenReturn(userDto);
+
+        userServiceImpl.delete();
+
+        verify(userRepository, times(1)).deleteById(1L);
     }
 }
